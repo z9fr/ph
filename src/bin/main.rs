@@ -13,6 +13,7 @@ struct Cli {
 enum Commands {
     /// create a new workspace
     Create(CreateWorkSpace),
+    Get(GetWorkspace),
 }
 
 #[derive(Args)]
@@ -21,16 +22,23 @@ struct CreateWorkSpace {
     path: Option<String>,
 }
 
+#[derive(Args)]
+struct GetWorkspace {
+    name: Option<String>,
+}
+
 fn main() {
     let cli = Cli::parse();
-    ph::add(12, 13);
 
     match &cli.command {
         Commands::Create(name) => {
-            println!(
-                "create new workspace {:?} the workspace path is {:?}",
-                name.name, name.path
-            );
+            let path_name = name.name.clone().unwrap();
+            let path = name.path.clone().unwrap();
+            ph::manage::workspace::create(path_name, path)
+        }
+        Commands::Get(input) => {
+            let name = input.name.clone().unwrap();
+            ph::manage::workspace::get(name).unwrap()
         }
     }
 }
